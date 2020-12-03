@@ -9,17 +9,30 @@ from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 from azureml.core.run import Run
 from azureml.data.dataset_factory import TabularDatasetFactory
+from sklearn.model_selection import train_test_split
 
 # TODO: Create TabularDataset using TabularDatasetFactory
 # Data is located at:
 # "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
 
-ds = ### YOUR CODE HERE ###
+# azureml-core of version 1.0.72 or higher is required
+# azureml-dataprep[pandas] of version 1.1.34 or higher is required
+from azureml.core import Workspace, Dataset
+
+subscription_id = 'a1ebbd25-46bc-446b-9547-5acab9b0125a'
+resource_group = 'aml-quickstarts-128915'
+workspace_name = 'quick-starts-ws-128915'
+
+workspace = Workspace(subscription_id, resource_group, workspace_name)
+
+dataset = Dataset.get_by_name(workspace, name='Bank-marketing')
+ds = dataset.to_pandas_dataframe()
+### YOUR CODE HERE ###
 
 x, y = clean_data(ds)
 
 # TODO: Split data into train and test sets.
-
+X_train, X_test, y_train,y_test = train_test_split(x,y, test_size=0.3, random_state=42)
 ### YOUR CODE HERE ###a
 
 run = Run.get_context()
