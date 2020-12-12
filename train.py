@@ -10,6 +10,8 @@ import pandas as pd
 from azureml.core.run import Run
 from azureml.data.dataset_factory import TabularDatasetFactory
 from sklearn.model_selection import train_test_split
+from azureml.core import Workspace, Dataset, Run
+
 
 # TODO: Create TabularDataset using TabularDatasetFactory
 # Data is located at:
@@ -17,25 +19,18 @@ from sklearn.model_selection import train_test_split
 
 # azureml-core of version 1.0.72 or higher is required
 # azureml-dataprep[pandas] of version 1.1.34 or higher is required
-from azureml.core import Workspace, Dataset
 
-subscription_id = 'a1ebbd25-46bc-446b-9547-5acab9b0125a'
-resource_group = 'aml-quickstarts-128915'
-workspace_name = 'quick-starts-ws-128915'
 
-workspace = Workspace(subscription_id, resource_group, workspace_name)
+run  = Run.get_context()
+workspace = run.experiment.workspace
 
 dataset = Dataset.get_by_name(workspace, name='Bank-marketing')
 ds = dataset.to_pandas_dataframe()
 ### YOUR CODE HERE ###
 
-x, y = clean_data(ds)
 
-# TODO: Split data into train and test sets.
-X_train, X_test, y_train,y_test = train_test_split(x,y, test_size=0.3, random_state=42)
 ### YOUR CODE HERE ###a
 
-run = Run.get_context()
 
 def clean_data(data):
     # Dict for cleaning data
@@ -43,7 +38,8 @@ def clean_data(data):
     weekdays = {"mon":1, "tue":2, "wed":3, "thu":4, "fri":5, "sat":6, "sun":7}
 
     # Clean and one hot encode data
-    x_df = data.to_pandas_dataframe().dropna()
+    #x_df = data.to_pandas_dataframe().dropna()
+    x_df = data.dropna()
     jobs = pd.get_dummies(x_df.job, prefix="job")
     x_df.drop("job", inplace=True, axis=1)
     x_df = x_df.join(jobs)
@@ -63,8 +59,13 @@ def clean_data(data):
 
     y_df = x_df.pop("y").apply(lambda s: 1 if s == "yes" else 0)
     
+    return x_df,y_df
 
 def main():
+    
+    x, y = clean_data(ds)
+    # TODO: Split data into train and test sets.
+    x_train, x_test, y_train,y_test = train_test_split(x,y, test_size=0.3, random_state=42)
     # Add arguments to script
     parser = argparse.ArgumentParser()
 
