@@ -20,9 +20,11 @@ from azureml.core import Workspace, Dataset, Run
 # azureml-core of version 1.0.72 or higher is required
 # azureml-dataprep[pandas] of version 1.1.34 or higher is required
 
-
-run  = Run.get_context()
-workspace = run.experiment.workspace
+try:
+    run  = Run.get_context()
+    workspace = run.experiment.workspace
+except:
+    workspace = Workspace.from_config()
 
 dataset = Dataset.get_by_name(workspace, name='Bank-marketing')
 ds = dataset.to_pandas_dataframe()
