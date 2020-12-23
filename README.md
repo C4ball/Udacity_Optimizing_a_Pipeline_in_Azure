@@ -58,7 +58,8 @@ RandomParameterSampling is faster than Grid Sampling because it picks randomly h
 **What are the benefits of the early stopping policy you chose?**
 Bandit stops the runs where the primary metric is not within the slack amount compared to the best performing run. For example, in this experiement after the interval 5 any run whose best metric is less than (1/(1+0.1) or 91% of then best performing run will be terminated.
 
-There two other stopping policies, Median stopping policy and Truncation selection policy.
+There are two other stopping policies: Median stopping policy and Truncation selection policy.
+
 Median stopping is based on the averages of primary metrics reported by the runs. Considering a delay_evaluation=5, in this policy after the interval 5 any run whose best metric is worse than the median of the running averages over intervals 1:5 across all training runs.
 In my opinion, this policy is slower because needs to computes running averages across all training runs, although it can be used to for less agress savings and  without terminating promising jobs.
 
